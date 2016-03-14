@@ -1,0 +1,96 @@
+Scriptname NEP_ZombieAliasScript extends ReferenceAlias
+{Script attached to aliases on the reanimated thralls tracking quest.}
+
+;-------------------------------------------------------------------------------
+;
+; PROPERTIES
+;
+;-------------------------------------------------------------------------------
+
+Spell Property NEP_ReanimatePersistAshPileSpell Auto
+{Spell that acts as a container for the ReanimateAshPile script.}
+
+Spell Property DeadThrall Auto
+{Dead Thrall spell, included so that it can be removed from the player when a thrall dies.}
+
+Spell Property PerkDarkSoulsZombieBonus Auto
+{Dark Souls spell, boosts zombie health, included so that it can be re-applied.}
+
+Perk Property DarkSouls Auto
+{Dark Souls perk, included so that if the player has the perk the effect can be re-applied.}
+
+FormList Property NEP_DeadThrallList Auto
+{Dead thrall tracking form list.}
+
+EffectShader Property ReanimateFXShader Auto
+{Reanimate visual effects, applied to the reanimated actor.}
+
+Actor Property PlayerRef Auto
+{The player.}
+
+;-------------------------------------------------------------------------------
+;
+; FUNCTIONS
+;
+;-------------------------------------------------------------------------------
+
+Function MoveZombieToPlayer(Actor Zombie)
+
+  If !Zombie.PathToReference(PlayerRef, 1)
+    Zombie.MoveTo(PlayerRef)
+  EndIf
+
+EndFunction
+
+;-------------------------------------------------------------------------------
+;
+; EVENTS
+;
+;-------------------------------------------------------------------------------
+
+Event OnCellDetach()
+
+  RegisterForSingleUpdateGameTime(1)
+
+EndEvent
+
+Event OnLoad()
+
+  Actor Zombie = Self.GetReference() as Actor
+
+  If !NEP_DeadThrallList.HasForm(Zombie)
+    Zombie.AddSpell(NEP_ReanimatePersistAshPileSpell)
+  EndIf
+
+  If PlayerRef.HasPerk(DarkSouls)
+    Zombie.AddSpell(PerkDarkSoulsZombieBonus)
+  EndIf
+
+  ReanimateFXShader.Play(Zombie)
+  MoveZombieToPlayer(Zombie)
+
+EndEvent
+
+Event OnUpdateGameTime()
+
+  MoveZombieToPlayer(Self.GetReference() as Actor)
+  UnregisterForUpdateGameTime()
+
+EndEvent
+
+Event OnDying(Actor Killer)
+
+  Actor Zombie = Self.GetReference() as Actor
+
+  If Zombie.Is3DLoaded()
+    ReanimateFXShader.Stop(Zombie)
+  EndIf
+
+  If NEP_DeadThrallList.HasForm(Zombie)
+    NEP_DeadThrallList.RemoveAddedForm(Zombie)
+    PlayerRef.RemoveSpell(DeadThrall)
+  EndIf
+
+  Self.Clear()
+
+EndEvent
