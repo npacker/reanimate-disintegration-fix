@@ -39,14 +39,8 @@ Actor Property PlayerRef Auto
 
 Function MoveZombieToPlayer(Actor Zombie)
 
-  Debug.Trace("NEP_ZombieAliasScript: " + Zombie + " pathing to Player")
-
   If !Zombie.PathToReference(PlayerRef, 1) && Zombie.GetParentCell() != PlayerRef.GetParentCell()
-    Debug.Trace("NEP_ZombieAliasScript: " + Zombie + " moving to Player")
     Zombie.MoveTo(PlayerRef)
-    Debug.Trace("NEP_ZombieAliasScript: " + Zombie + " moved to Player")
-  Else
-    Debug.Trace("NEP_ZombieAliasScript: " + Zombie + " pathed to Player")
   EndIf
 
 EndFunction
@@ -57,41 +51,25 @@ EndFunction
 ;
 ;-------------------------------------------------------------------------------
 
-Event OnCellDetach()
-
-  Debug.Trace("NEP_ZombieAliasScript: OnCellDetach")
-
-EndEvent
-
 Event OnLoad()
 
   Actor Zombie = Self.GetReference() as Actor
 
-  Debug.Trace("NEP_ZombieAliasScript: OnLoad")
-
   If Zombie == None
-    Debug.Trace("NEP_ZombieAliasScript: Zombie " + Zombie + " is None")
     Return
   EndIf
 
   If !NEP_DeadThrallList.HasForm(Zombie)
-    Debug.Trace("NEP_ZombieAliasScript: Zombie " + Zombie + " is not a thrall")
     Zombie.AddSpell(NEP_ReanimatePersistAshPileSpell)
-    Debug.Trace("NEP_ZombieAliasScript: Zombe " + Zombie + " has NEP_ReanimatePersistAshPileSpell " + Zombie.HasSpell(NEP_ReanimatePersistAshPileSpell))
   Else
-    Debug.Trace("NEP_ZombieAliasScript: Zombie " + Zombie + " is a thrall")
     Zombie.AddSpell(NEP_ReanimatePersistFortifyHealingSpell)
-    Debug.Trace("NEP_ZombieAliasScript: Zombe " + Zombie + " has NEP_ReanimatePersistFortifyHealingSpell " + Zombie.HasSpell(NEP_ReanimatePersistFortifyHealingSpell))
   EndIf
 
   If PlayerRef.HasPerk(DarkSouls)
-    Debug.Trace("NEP_ZombieAliasScript: Player has Dark Souls perk")
     Zombie.AddSpell(PerkDarkSoulsZombieBonus)
-    Debug.Trace("NEP_ZombieAliasScript: Zombe " + Zombie + " has PerkDarkSoulsZombieBonus " + Zombie.HasSpell(PerkDarkSoulsZombieBonus))
   EndIf
 
   ReanimateFXShader.Play(Zombie)
-  Debug.Trace("NEP_ZombieAliasScript: Played " + ReanimateFXShader + " on " + Zombie)
   MoveZombieToPlayer(Zombie)
 
 EndEvent
@@ -102,16 +80,12 @@ Event OnDying(Actor Killer)
 
   Self.Clear()
 
-  Debug.Trace("NEP_ZombieAliasScript: OnDying")
-
   If Zombie.Is3DLoaded()
     ReanimateFXShader.Stop(Zombie)
-    Debug.Trace("NEP_ZombieAliasScript: Removed " + ReanimateFXShader + " from " + Zombie)
   EndIf
 
   If NEP_DeadThrallList.HasForm(Zombie)
     NEP_DeadThrallList.RemoveAddedForm(Zombie)
-    Debug.Trace("NEP_ZombieAliasScript: Removed " + Zombie + " from dead thrall tracking list " + !NEP_DeadThrallList.HasForm(Zombie))
     PlayerRef.RemoveSpell(DeadThrall)
   EndIf
 

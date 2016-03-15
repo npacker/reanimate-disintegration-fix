@@ -18,8 +18,6 @@ FormList Property NEP_DeadThrallList Auto
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  Debug.Trace("NEP_DeadThrallEffectScript: OnEffectStart")
-  Debug.Trace("NEP_DeadThrallEffectScript: Target is " + Target)
   NEP_DeadThrallList.AddForm(Target)
 
 EndEvent

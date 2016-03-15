@@ -18,8 +18,6 @@ ReferenceAlias[] Property ZombieAliases Auto
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  Debug.Trace("NEP_ReanimateEffectScript: OnEffectStart")
-
   Bool AliasFound = False
   Int Index = ZombieAliases.Length
 
@@ -27,11 +25,5 @@ Event OnEffectStart(Actor Target, Actor Caster)
     Index -= 1
     AliasFound = ZombieAliases[Index].ForceRefIfEmpty(Target as ObjectReference)
   EndWhile
-
-  Debug.Trace("NEP_ReanimateEffectScript: Zombie alias found " + AliasFound)
-
-  If AliasFound
-    Debug.Trace("NEP_ReanimateEffectScript: Zombie " + Target + " added to " + ZombieAliases[Index] + " alias")
-  EndIf
 
 EndEvent

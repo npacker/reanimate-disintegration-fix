@@ -18,9 +18,6 @@ Spell Property NEP_ReanimatePersistAshPileSpell Auto
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  Debug.Trace("NEP_AshPileApplyScript: OnEffectStart")
-  Debug.Trace("NEP_AshPileApplyScript: Target is " + Target)
   Target.AddSpell(NEP_ReanimatePersistAshPileSpell)
-  Debug.Trace("NEP_AshPileApplyScript: Target has NEP_ReanimatePersistAshPileSpell " + Target.HasSpell(NEP_ReanimatePersistAshPileSpell))
 
 EndEvent

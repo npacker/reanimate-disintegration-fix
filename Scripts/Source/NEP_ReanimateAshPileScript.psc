@@ -63,20 +63,15 @@ EndFunction
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  Debug.Trace("NEP_ReanimateAshPile: OnEffectStart")
-
   Victim = Target
 
 EndEvent
 
 Event OnDying(Actor Killer)
 
-  Debug.Trace("NEP_ReanimateAshPile: OnDying")
-
   If !AshPileCreated
     TurnToAsh()
     AshPileCreated = True
-    Debug.Trace("NEP_ReanimateAshPile: Ash pile created")
   EndIf
 
 EndEvent
