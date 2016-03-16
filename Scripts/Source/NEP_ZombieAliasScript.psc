@@ -113,7 +113,7 @@ Event OnDying(Actor Killer)
 
   If NEP_DeadThrallList.HasForm(Zombie)
     NEP_DeadThrallList.RemoveAddedForm(Zombie)
-    PlayerRef.RemoveSpell(DeadThrall)
+    PlayerRef.DispelSpell(DeadThrall)
   EndIf
 
 EndEvent
