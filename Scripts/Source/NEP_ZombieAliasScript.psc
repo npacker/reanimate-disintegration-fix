@@ -39,8 +39,17 @@ Actor Property PlayerRef Auto
 
 Function MoveZombieToPlayer(Actor Zombie)
 
-  If !Zombie.PathToReference(PlayerRef, 1) && Zombie.GetParentCell() != PlayerRef.GetParentCell()
+  If Zombie.GetParentCell() != PlayerRef.GetParentCell()
     Zombie.MoveTo(PlayerRef)
+    UnregisterForUpdate()
+  EndIf
+
+EndFunction
+
+Function PathZombieToPlayer(Actor Zombie)
+
+  If Zombie.GetParentCell() == PlayerRef.GetParentCell()
+    Zombie.PathToReference(PlayerRef, 1)
   EndIf
 
 EndFunction
@@ -59,10 +68,10 @@ Event OnLoad()
     Return
   EndIf
 
-  If !NEP_DeadThrallList.HasForm(Zombie)
-    Zombie.AddSpell(NEP_ReanimatePersistAshPileSpell)
-  Else
+  If NEP_DeadThrallList.HasForm(Zombie)
     Zombie.AddSpell(NEP_ReanimatePersistFortifyHealingSpell)
+  Else
+    Zombie.AddSpell(NEP_ReanimatePersistAshPileSpell)
   EndIf
 
   If PlayerRef.HasPerk(DarkSouls)
@@ -70,6 +79,24 @@ Event OnLoad()
   EndIf
 
   ReanimateFXShader.Play(Zombie)
+  PathZombieToPlayer(Zombie)
+
+EndEvent
+
+Event OnCellDetach()
+
+  RegisterForSingleUpdate(5.0)
+
+EndEvent
+
+Event OnUpdate()
+
+  Actor Zombie = Self.GetReference() as Actor
+
+  If Zombie == None
+    Return
+  EndIf
+
   MoveZombieToPlayer(Zombie)
 
 EndEvent
