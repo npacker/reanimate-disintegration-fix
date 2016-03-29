@@ -8,7 +8,7 @@ Scriptname NEP_ZombieAliasScript extends ReferenceAlias
 ;-------------------------------------------------------------------------------
 
 Spell Property NEP_ReanimatePersistAshPileSpell Auto
-{Spell that applies the reanimate ash pile effect.}
+{The reanimate ash pile spell, which applies the responsible effect script.}
 
 Spell Property NEP_ReanimatePersistFortifyHealingSpell Auto
 {Spell that applies the fortify healing rate spell to dead thralls.}
@@ -37,20 +37,29 @@ Actor Property PlayerRef Auto
 ;
 ;-------------------------------------------------------------------------------
 
-Function MoveZombieToPlayer(Actor Zombie)
+Function CleanUpZombie(Actor Zombie)
 
-  If Zombie.GetParentCell() != PlayerRef.GetParentCell()
-    Zombie.MoveTo(PlayerRef)
-    UnregisterForUpdate()
+  Self.Clear()
+
+  If Zombie.Is3DLoaded()
+    ReanimateFXShader.Stop(Zombie)
+  EndIf
+
+  If NEP_DeadThrallList.HasForm(Zombie)
+    NEP_DeadThrallList.RemoveAddedForm(Zombie)
   EndIf
 
 EndFunction
 
-Function PathZombieToPlayer(Actor Zombie)
+Function MoveZombieToPlayer(Actor Zombie)
 
-  If Zombie.GetParentCell() == PlayerRef.GetParentCell()
-    Zombie.PathToReference(PlayerRef, 1)
+  UnregisterForUpdate()
+
+  If Zombie.GetParentCell() != PlayerRef.GetParentCell()
+    Zombie.MoveTo(PlayerRef)
   EndIf
+
+  UnregisterForUpdate()
 
 EndFunction
 
@@ -79,13 +88,29 @@ Event OnLoad()
   EndIf
 
   ReanimateFXShader.Play(Zombie)
-  PathZombieToPlayer(Zombie)
+
+EndEvent
+
+Event OnUnload()
+
+  Actor Zombie = Self.GetReference() as Actor
+
+  If Zombie == None
+    Return
+  EndIf
+
+  If Zombie.IsDisabled() || Zombie.IsDeleted()
+    Zombie.Kill()
+  Else
+    RegisterForSingleUpdate(5.0)
+  EndIf
 
 EndEvent
 
 Event OnCellDetach()
 
-  RegisterForSingleUpdate(5.0)
+  Utility.Wait(0.5)
+  RegisterForSingleUpdate(4.5)
 
 EndEvent
 
@@ -97,22 +122,28 @@ Event OnUpdate()
     Return
   EndIf
 
-  MoveZombieToPlayer(Zombie)
+  If Zombie.IsDead()
+    CleanUpZombie(Zombie)
+  Else
+    MoveZombieToPlayer(Zombie)
+  EndIf
 
 EndEvent
 
 Event OnDying(Actor Killer)
 
+  CleanUpZombie(Self.GetReference() as Actor)
+
+EndEvent
+
+Event OnDeath(Actor Killer)
+
   Actor Zombie = Self.GetReference() as Actor
 
-  Self.Clear()
-
-  If Zombie.Is3DLoaded()
-    ReanimateFXShader.Stop(Zombie)
+  If Zombie == None
+    Return
   EndIf
 
-  If NEP_DeadThrallList.HasForm(Zombie)
-    NEP_DeadThrallList.RemoveAddedForm(Zombie)
-  EndIf
+  CleanUpZombie(Zombie)
 
 EndEvent

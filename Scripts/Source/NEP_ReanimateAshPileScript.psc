@@ -20,13 +20,13 @@ Float fDelay = 1.25
 
 Float fDelayEnd = 1.65
 
-Float ShaderDuration = 4.00
+Float ShaderDuration = 4.0
 
 Bool AshPileCreated = False
 
-Activator AshPileObject
+Activator AshPileObject = None
 
-Actor Victim
+Actor Victim = None
 
 ;-------------------------------------------------------------------------------
 ;
@@ -35,6 +35,12 @@ Actor Victim
 ;-------------------------------------------------------------------------------
 
 Function TurnToAsh()
+
+  If AshPileCreated || !Victim.IsDead()
+    Return
+  EndIf
+
+  AshPileCreated = True
 
   Victim.SetCriticalStage(Victim.CritStage_DisintegrateStart)
 
@@ -67,11 +73,21 @@ Event OnEffectStart(Actor Target, Actor Caster)
 
 EndEvent
 
+Event OnEffectFinish(Actor Target, Actor Caster)
+
+  Utility.Wait(0.1)
+  TurnToAsh()
+
+EndEvent
+
 Event OnDying(Actor Killer)
 
-  If !AshPileCreated
-    TurnToAsh()
-    AshPileCreated = True
-  EndIf
+  TurnToAsh()
+
+EndEvent
+
+Event OnDeath(Actor Killer)
+
+  TurnToAsh()
 
 EndEvent
