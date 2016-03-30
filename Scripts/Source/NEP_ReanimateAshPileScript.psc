@@ -20,11 +20,9 @@ Float fDelay = 1.25
 
 Float fDelayEnd = 1.65
 
-Float ShaderDuration = 4.0
+Float fShaderDuration = 4.0
 
 Bool AshPileCreated = False
-
-Activator AshPileObject = None
 
 Actor Victim = None
 
@@ -45,11 +43,11 @@ Function TurnToAsh()
   Victim.SetCriticalStage(Victim.CritStage_DisintegrateStart)
 
   If Victim.Is3DLoaded()
-    ShockDisintegrate01FXS.Play(Victim, ShaderDuration)
+    ShockDisintegrate01FXS.Play(Victim, fShaderDuration)
   EndIf
 
   Utility.Wait(fDelay)
-  Victim.AttachAshPile(AshPileObject)
+  Victim.AttachAshPile()
   Utility.Wait(fDelayEnd)
 
   If Victim.Is3DLoaded()
