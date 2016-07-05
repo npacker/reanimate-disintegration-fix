@@ -13,9 +13,6 @@ Spell Property NEP_ReanimatePersistAshPileSpell Auto
 Spell Property NEP_ReanimatePersistFortifyHealingSpell Auto
 {Spell that applies the fortify healing rate spell to dead thralls.}
 
-Spell Property DeadThrall Auto
-{Dead Thrall spell, included so that it can be removed from the player when a thrall dies.}
-
 Spell Property PerkDarkSoulsZombieBonus Auto
 {Dark Souls spell, boosts zombie health, included so that it can be re-applied.}
 
@@ -30,6 +27,16 @@ EffectShader Property ReanimateFXShader Auto
 
 Actor Property PlayerRef Auto
 {The player.}
+
+;-------------------------------------------------------------------------------
+;
+; VARIABLES
+;
+;-------------------------------------------------------------------------------
+
+Float fOffsetDistance = 100.0
+
+Float fDelay = 2.0
 
 ;-------------------------------------------------------------------------------
 ;
@@ -53,13 +60,13 @@ EndFunction
 
 Function MoveZombieToPlayer(Actor Zombie)
 
-  UnregisterForUpdate()
-
   If Zombie.GetParentCell() != PlayerRef.GetParentCell()
-    Zombie.MoveTo(PlayerRef)
+    Zombie.MoveTo(PlayerRef, \
+      Math.Sin(PlayerRef.GetAngleZ()) * fOffsetDistance, \
+      Math.Cos(PlayerRef.GetAngleZ()) * fOffsetDistance, \
+      0.0, True)
+    UnregisterForUpdate()
   EndIf
-
-  UnregisterForUpdate()
 
 EndFunction
 
@@ -102,15 +109,14 @@ Event OnUnload()
   If Zombie.IsDisabled() || Zombie.IsDeleted()
     Zombie.Kill()
   Else
-    RegisterForSingleUpdate(5.0)
+    RegisterForSingleUpdate(fDelay)
   EndIf
 
 EndEvent
 
 Event OnCellDetach()
 
-  Utility.Wait(0.5)
-  RegisterForSingleUpdate(4.5)
+  RegisterForSingleUpdate(fDelay)
 
 EndEvent
 
