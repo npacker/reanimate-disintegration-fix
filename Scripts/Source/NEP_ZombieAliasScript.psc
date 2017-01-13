@@ -60,11 +60,16 @@ EndFunction
 
 Function MoveZombieToPlayer(Actor Zombie)
 
-  If Zombie.GetParentCell() != PlayerRef.GetParentCell()
-    Zombie.MoveTo(PlayerRef, \
-      Math.Sin(PlayerRef.GetAngleZ()) * fOffsetDistance, \
-      Math.Cos(PlayerRef.GetAngleZ()) * fOffsetDistance, \
-      0.0, True)
+  Cell ZombieCell = Zombie.GetParentCell()
+  Cell PlayerCell = PlayerRef.GetParentCell()
+
+  If ZombieCell != PlayerCell \
+      && !(!ZombieCell.IsInterior() && !PlayerCell.IsInterior())
+    float XOffset = Math.Sin(PlayerRef.GetAngleZ()) * fOffsetDistance
+    float YOffset = Math.Cos(PlayerRef.GetAngleZ()) * fOffsetDistance
+    float ZOffset = 0.0
+
+    Zombie.MoveTo(PlayerRef, XOffset, YOffset, ZOffset, True)
     UnregisterForUpdate()
   EndIf
 

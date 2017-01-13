@@ -27,14 +27,16 @@ Event OnEffectStart(Actor Target, Actor Caster)
     ReferenceAlias ZombieAlias = ZombieAliases[Index]
     Actor Zombie = ZombieAlias.GetReference() as Actor
 
-    If Zombie == None
-      AliasFound = True
-    ElseIf Zombie.IsDead() || Zombie.IsDisabled() || Zombie.IsDeleted()
-      AliasFound = True
-
+    If Zombie.IsDead() || Zombie.IsDisabled() || Zombie.IsDeleted()
       Zombie.DispelAllSpells()
       Zombie.Kill()
       ZombieAlias.Clear()
+
+      Zombie = None
+    EndIf
+
+    If Zombie == None
+      AliasFound = True
     EndIf
 
     If AliasFound
