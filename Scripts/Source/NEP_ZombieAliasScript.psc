@@ -56,6 +56,8 @@ Function CleanUpZombie(Actor Zombie)
     NEP_DeadThrallList.RemoveAddedForm(Zombie)
   EndIf
 
+  Debug.Trace("Cleaned up zombie: " + Zombie)
+
 EndFunction
 
 Function MoveZombieToPlayer(Actor Zombie)
@@ -72,6 +74,8 @@ Function MoveZombieToPlayer(Actor Zombie)
     Zombie.MoveTo(PlayerRef, XOffset, YOffset, ZOffset, True)
     UnregisterForUpdate()
   EndIf
+
+  Debug.Trace("Moved Zombie to player: " + Zombie)
 
 EndFunction
 
@@ -101,6 +105,8 @@ Event OnLoad()
 
   ReanimateFXShader.Play(Zombie)
 
+  Debug.Trace("Loaded zombie: " + Zombie)
+
 EndEvent
 
 Event OnUnload()
@@ -117,11 +123,15 @@ Event OnUnload()
     RegisterForSingleUpdate(fDelay)
   EndIf
 
+  Debug.Trace("Unloaded zombie: " + Zombie)
+
 EndEvent
 
 Event OnCellDetach()
 
   RegisterForSingleUpdate(fDelay)
+
+  Debug.Trace("Detached cell containing zombie: " + Self.GetReference() as Actor)
 
 EndEvent
 
@@ -139,11 +149,17 @@ Event OnUpdate()
     MoveZombieToPlayer(Zombie)
   EndIf
 
+  Debug.Trace("Updated zombie: " + Zombie)
+
 EndEvent
 
 Event OnDying(Actor Killer)
 
-  CleanUpZombie(Self.GetReference() as Actor)
+  Actor Zombie = Self.GetReference() as Actor
+
+  CleanUpZombie(Zombie)
+
+  Debug.Trace("Zombie is dying: " + Zombie)
 
 EndEvent
 
@@ -156,5 +172,7 @@ Event OnDeath(Actor Killer)
   EndIf
 
   CleanUpZombie(Zombie)
+
+  Debug.Trace("Zombie is dead: " + Zombie)
 
 EndEvent
