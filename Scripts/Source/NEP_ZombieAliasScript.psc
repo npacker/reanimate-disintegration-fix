@@ -118,6 +118,7 @@ Event OnUnload()
   EndIf
 
   If Zombie.IsDisabled() || Zombie.IsDeleted()
+    Debug.Trace("Killing disabled/deleted zombie: " + Zombie)
     Zombie.Kill()
   Else
     RegisterForSingleUpdate(fDelay)
@@ -159,7 +160,7 @@ Event OnDying(Actor Killer)
 
   CleanUpZombie(Zombie)
 
-  Debug.Trace("Zombie is dying: " + Zombie)
+  Debug.Trace("Zombie " + Zombie + " is dying, killed by " + Killer)
 
 EndEvent
 
@@ -173,6 +174,6 @@ Event OnDeath(Actor Killer)
 
   CleanUpZombie(Zombie)
 
-  Debug.Trace("Zombie is dead: " + Zombie)
+  Debug.Trace("Zombie " + Zombie + " is dead, killed by " + Killer)
 
 EndEvent

@@ -1,18 +1,18 @@
 Scriptname NEP_ReanimateTrackTargetScript extends Quest
 {Script to process and possibly track the target of a reanimate spell.}
 
-Actor Property CurrentReanimateTarget Auto
+Actor Property CurrentReanimateTarget Auto Hidden
 {The actor most recently targeted by a reanimate spell.}
 
 ReferenceAlias[] Property ZombieAliases Auto
 {Aliases for storing reanimated thrall references.}
 
-Function TrackZombie()
+Function TrackZombie(Actor Target)
 
   Bool AliasFound = False
   Int Index = ZombieAliases.Length
 
-  If ZombieAlreadyTracked()
+  If IsAlreadyTracked(Target)
     Return
   EndIf
 
@@ -24,6 +24,14 @@ Function TrackZombie()
 
     If Zombie != None
       If Zombie.IsDead() || Zombie.IsDisabled() || Zombie.IsDeleted()
+        If Zombie.IsDead()
+          Debug.Trace("Zombie is dead: " + Zombie)
+        ElseIf Zombie.IsDisabled()
+          Debug.Trace("Zombie is disabled: " + Zombie)
+        ElseIf Zombie.IsDeleted()
+          Debug.Trace("Zombie is deleted: " + Zombie)
+        EndIf
+
         Zombie.DispelAllSpells()
         Zombie.Kill()
         ZombieAlias.Clear()
@@ -36,20 +44,19 @@ Function TrackZombie()
 
     If Zombie == None
       AliasFound = True
-      ZombieAlias.ForceRefTo(CurrentReanimateTarget as ObjectReference)
-      Debug.Trace("Tracked zombie " + CurrentReanimateTarget + " in reference alias " + ZombieAlias)
-      CurrentReanimateTarget = None
+      ZombieAlias.ForceRefTo(Target as ObjectReference)
+      Debug.Trace("Tracked zombie " + Target + " in reference alias " + ZombieAlias)
     EndIf
   EndWhile
 
 EndFunction
 
-Bool Function ZombieAlreadyTracked()
+Bool Function IsAlreadyTracked(Actor Target)
 
-  Bool bZombieAlreadyTracked = False
+  Bool ZombieAlreadyTracked = False
   Int Index = ZombieAliases.Length
 
-  While Index && !bZombieAlreadyTracked
+  While Index && !ZombieAlreadyTracked
     Index -= 1
 
     ReferenceAlias ZombieAlias = ZombieAliases[Index]
@@ -59,12 +66,12 @@ Bool Function ZombieAlreadyTracked()
       Debug.Trace(Zombie + " => " + ZombieAlias)
     EndIf
 
-    If Zombie == CurrentReanimateTarget
-      bZombieAlreadyTracked = True
-      Debug.Trace("Zombie " + CurrentReanimateTarget + " is already tracked.")
+    If Zombie == Target
+      ZombieAlreadyTracked = True
+      Debug.Trace("Zombie " + Target + " is already tracked.")
     EndIf
   EndWhile
 
-  Return bZombieAlreadyTracked
+  Return ZombieAlreadyTracked
 
 EndFunction
