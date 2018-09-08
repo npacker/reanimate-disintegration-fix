@@ -1,2 +1,24 @@
 Scriptname NEP_DeadThrallEffectScript extends ActiveMagicEffect
-{Script to add any actor reanimated with Dead Thrall to a tracking form list.}
+{Script attached to Dead Thrall effect.}
+
+;-------------------------------------------------------------------------------
+;
+; PROPERTIES
+;
+;-------------------------------------------------------------------------------
+
+Spell Property NEP_ReanimateFixDeadThrallTargetCheckSpell Auto
+{Ability that applies the condition-checked effect script to the target.}
+
+;-------------------------------------------------------------------------------
+;
+; EVENTS
+;
+;-------------------------------------------------------------------------------
+
+
+Event OnEffectStart(Actor Target, Actor Caster)
+
+  Target.AddSpell(NEP_ReanimateFixDeadThrallTargetCheckSpell)
+
+EndEvent

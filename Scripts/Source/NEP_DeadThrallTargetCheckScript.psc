@@ -1,5 +1,5 @@
-Scriptname NEP_TargetCheckEffectScript extends ActiveMagicEffect
-{Script to add reanimated actors to the reanimate fix tracking quest.}
+Scriptname NEP_DeadThrallTargetCheckScript extends ActiveMagicEffect
+{Script attached to Dead Thrall target check effect.}
 
 ;-------------------------------------------------------------------------------
 ;
@@ -7,8 +7,8 @@ Scriptname NEP_TargetCheckEffectScript extends ActiveMagicEffect
 ;
 ;-------------------------------------------------------------------------------
 
-NEP_ReanimateFixScript Property NEP_ReanimateFixQuest Auto
-{Reanimate Fix Quext script.}
+Faction Property NEP_ReanimateFixDeadThrallFaction Auto
+{Faction for all NPCs under influence of Dead Thrall effects.}
 
 ;-------------------------------------------------------------------------------
 ;
@@ -18,7 +18,6 @@ NEP_ReanimateFixScript Property NEP_ReanimateFixQuest Auto
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  NEP_ReanimateFixQuest.TrackZombie(Target)
+  Target.AddToFaction(NEP_ReanimateFixDeadThrallFaction)
 
 EndEvent
-
