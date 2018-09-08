@@ -1,4 +1,4 @@
-Scriptname NEP_AshPileScript extends activemagiceffect  
+Scriptname NEP_ReanimateAshPileScript extends ActiveMagicEffect
 {Scripted effect for on death ash pile}
 
 ;-------------------------------------------------------------------------------
