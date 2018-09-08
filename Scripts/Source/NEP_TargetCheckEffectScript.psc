@@ -21,4 +21,3 @@ Event OnEffectStart(Actor Target, Actor Caster)
   NEP_ReanimateFixQuest.TrackZombie(Target)
 
 EndEvent
-

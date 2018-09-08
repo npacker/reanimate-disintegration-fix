@@ -16,7 +16,7 @@ Faction Property NEP_ReanimateFixDeadThrallFaction Auto
 ;
 ;-------------------------------------------------------------------------------
 
-Float fDelay = 2.0
+Float fDelay = 4.0
 
 ;-------------------------------------------------------------------------------
 ;
@@ -27,7 +27,6 @@ Float fDelay = 2.0
 Function CleanUpZombie(Actor Zombie)
 
   Self.Clear()
-
   Zombie.RemoveFromFaction(NEP_ReanimateFixDeadThrallFaction)
 
 EndFunction
@@ -54,12 +53,6 @@ Event OnUnload()
 
 EndEvent
 
-Event OnCellDetach()
-
-  RegisterForSingleUpdate(fDelay)
-
-EndEvent
-
 Event OnUpdate()
 
   Actor Zombie = Self.GetReference() as Actor
@@ -76,7 +69,13 @@ EndEvent
 
 Event OnDying(Actor Killer)
 
-  CleanUpZombie(Self.GetReference() as Actor)
+  Actor Zombie = Self.GetReference() as Actor
+
+  If Zombie == None
+    Return
+  EndIf
+
+  CleanUpZombie(Zombie)
 
 EndEvent
 
