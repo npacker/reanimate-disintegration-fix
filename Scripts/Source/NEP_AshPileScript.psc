@@ -1,4 +1,4 @@
-Scriptname NEP_ReanimateAshPileScript extends ActiveMagicEffect
+Scriptname NEP_AshPileScript extends ActiveMagicEffect
 {Scripted effect for on death ash pile}
 
 ;-------------------------------------------------------------------------------
@@ -73,7 +73,6 @@ EndEvent
 
 Event OnEffectFinish(Actor Target, Actor Caster)
 
-  Utility.Wait(0.1)
   TurnToAsh()
 
 EndEvent

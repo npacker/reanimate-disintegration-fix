@@ -1,5 +1,5 @@
 Scriptname NEP_ReanimateFixScript extends Quest
-{Script to add actor to zombie tracking alias.}
+{Main Reanimate Fix control script.}
 
 ;-------------------------------------------------------------------------------
 ;
@@ -7,8 +7,14 @@ Scriptname NEP_ReanimateFixScript extends Quest
 ;
 ;-------------------------------------------------------------------------------
 
+Actor Property PlayerRef Auto
+{The player.}
+
 ReferenceAlias[] Property ZombieAliases Auto
 {Aliases for storing reanimated thrall references.}
+
+Perk Property NEP_ReanimateFixPerk Auto
+{Reanimate Fix perk, provides entry point to all reanimate spells.}
 
 ;-------------------------------------------------------------------------------
 ;
@@ -68,3 +74,15 @@ Bool Function ZombieAlreadyTracked(Actor Target)
   Return Result
 
 EndFunction
+
+;-------------------------------------------------------------------------------
+;
+; EVENTS
+;
+;-------------------------------------------------------------------------------
+
+Event OnInit()
+
+  PlayerRef.AddPerk(NEP_ReanimateFixPerk)
+
+EndEvent

@@ -10,6 +10,9 @@ Scriptname NEP_ZombieAliasScript extends ReferenceAlias
 EffectShader Property ReanimateFXShader Auto
 {Reanimate visual effects, applied to the reanimated actor.}
 
+Faction Property NEP_ReanimateFixDeadThrallFaction Auto
+{Faction for zombies affected by Dead Thrall reanimate effects.}
+
 ;-------------------------------------------------------------------------------
 ;
 ; VARIABLES
@@ -28,9 +31,11 @@ Function CleanUpZombie(Actor Zombie)
 
   Self.Clear()
 
-  If Zombie.Is3DLoaded()
-    ReanimateFXShader.Stop(Zombie)
-  EndIf
+  ; If Zombie.Is3DLoaded()
+    ; ReanimateFXShader.Stop(Zombie)
+  ; EndIf
+
+  Zombie.RemoveFromFaction(NEP_ReanimateFixDeadThrallFaction)
 
 EndFunction
 
@@ -48,7 +53,7 @@ Event OnLoad()
     Return
   EndIf
 
-  ReanimateFXShader.Play(Zombie)
+  ; ReanimateFXShader.Play(Zombie)
 
 EndEvent
 

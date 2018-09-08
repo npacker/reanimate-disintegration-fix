@@ -21,3 +21,9 @@ Event OnEffectStart(Actor Target, Actor Caster)
   Target.AddToFaction(NEP_ReanimateFixDeadThrallFaction)
 
 EndEvent
+
+Event OnEffectFinish(Actor Target, Actor Caster)
+
+  Target.RemoveFromFaction(NEP_ReanimateFixDeadThrallFaction)
+
+EndEvent
