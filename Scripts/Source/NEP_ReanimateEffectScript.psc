@@ -1,5 +1,5 @@
 Scriptname NEP_ReanimateEffectScript extends ActiveMagicEffect
-{Script to add reanimated actors to the reanimated thrall tracking quest.}
+{Script attached to Reanimate Fix Effect.}
 
 ;-------------------------------------------------------------------------------
 ;
@@ -7,8 +7,8 @@ Scriptname NEP_ReanimateEffectScript extends ActiveMagicEffect
 ;
 ;-------------------------------------------------------------------------------
 
-ReferenceAlias[] Property ZombieAliases Auto
-{Aliases for storing reanimated thrall references.}
+Spell Property NEP_ReanimateFixTargetCheckSpell Auto
+{Ability that applies the condition-checked effect script to the target.}
 
 ;-------------------------------------------------------------------------------
 ;
@@ -16,32 +16,9 @@ ReferenceAlias[] Property ZombieAliases Auto
 ;
 ;-------------------------------------------------------------------------------
 
+
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  Bool AliasFound = False
-  Int Index = ZombieAliases.Length
-
-  While Index && !AliasFound
-    Index -= 1
-
-    ReferenceAlias ZombieAlias = ZombieAliases[Index]
-    Actor Zombie = ZombieAlias.GetReference() as Actor
-
-    If Zombie.IsDead() || Zombie.IsDisabled() || Zombie.IsDeleted()
-      Zombie.DispelAllSpells()
-      Zombie.Kill()
-      ZombieAlias.Clear()
-
-      Zombie = None
-    EndIf
-
-    If Zombie == None
-      AliasFound = True
-    EndIf
-
-    If AliasFound
-      ZombieAlias.ForceRefTo(Target as ObjectReference)
-    EndIf
-  EndWhile
+  Target.AddSpell(NEP_ReanimateFixTargetCheckSpell)
 
 EndEvent

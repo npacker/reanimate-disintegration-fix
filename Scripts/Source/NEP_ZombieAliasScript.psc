@@ -7,34 +7,14 @@ Scriptname NEP_ZombieAliasScript extends ReferenceAlias
 ;
 ;-------------------------------------------------------------------------------
 
-Spell Property NEP_ReanimatePersistAshPileSpell Auto
-{The reanimate ash pile spell, which applies the responsible effect script.}
-
-Spell Property NEP_ReanimatePersistFortifyHealingSpell Auto
-{Spell that applies the fortify healing rate spell to dead thralls.}
-
-Spell Property PerkDarkSoulsZombieBonus Auto
-{Dark Souls spell, boosts zombie health, included so that it can be re-applied.}
-
-Perk Property DarkSouls Auto
-{Dark Souls perk, included so that if the player has the perk the effect can be re-applied.}
-
-FormList Property NEP_DeadThrallList Auto
-{Dead thrall tracking form list.}
-
 EffectShader Property ReanimateFXShader Auto
 {Reanimate visual effects, applied to the reanimated actor.}
-
-Actor Property PlayerRef Auto
-{The player.}
 
 ;-------------------------------------------------------------------------------
 ;
 ; VARIABLES
 ;
 ;-------------------------------------------------------------------------------
-
-Float fOffsetDistance = 100.0
 
 Float fDelay = 2.0
 
@@ -52,27 +32,6 @@ Function CleanUpZombie(Actor Zombie)
     ReanimateFXShader.Stop(Zombie)
   EndIf
 
-  If NEP_DeadThrallList.HasForm(Zombie)
-    NEP_DeadThrallList.RemoveAddedForm(Zombie)
-  EndIf
-
-EndFunction
-
-Function MoveZombieToPlayer(Actor Zombie)
-
-  Cell ZombieCell = Zombie.GetParentCell()
-  Cell PlayerCell = PlayerRef.GetParentCell()
-
-  If ZombieCell != PlayerCell \
-      && !(!ZombieCell.IsInterior() && !PlayerCell.IsInterior())
-    float XOffset = Math.Sin(PlayerRef.GetAngleZ()) * fOffsetDistance
-    float YOffset = Math.Cos(PlayerRef.GetAngleZ()) * fOffsetDistance
-    float ZOffset = 0.0
-
-    Zombie.MoveTo(PlayerRef, XOffset, YOffset, ZOffset, True)
-    UnregisterForUpdate()
-  EndIf
-
 EndFunction
 
 ;-------------------------------------------------------------------------------
@@ -87,16 +46,6 @@ Event OnLoad()
 
   If Zombie == None
     Return
-  EndIf
-
-  If NEP_DeadThrallList.HasForm(Zombie)
-    Zombie.AddSpell(NEP_ReanimatePersistFortifyHealingSpell)
-  Else
-    Zombie.AddSpell(NEP_ReanimatePersistAshPileSpell)
-  EndIf
-
-  If PlayerRef.HasPerk(DarkSouls)
-    Zombie.AddSpell(PerkDarkSoulsZombieBonus)
   EndIf
 
   ReanimateFXShader.Play(Zombie)
@@ -135,8 +84,6 @@ Event OnUpdate()
 
   If Zombie.IsDead()
     CleanUpZombie(Zombie)
-  Else
-    MoveZombieToPlayer(Zombie)
   EndIf
 
 EndEvent
