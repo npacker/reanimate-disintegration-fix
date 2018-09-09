@@ -39,7 +39,6 @@ Function TurnToAsh()
   EndIf
 
   AshPileCreated = True
-
   Victim.SetCriticalStage(Victim.CritStage_DisintegrateStart)
 
   If Victim.Is3DLoaded()

@@ -7,17 +7,19 @@ Scriptname NEP_ZombieAliasScript extends ReferenceAlias
 ;
 ;-------------------------------------------------------------------------------
 
-FormList Property NEP_ZombieFormList Auto
-{Form List of tracked Zombies.}
+NEP_ReanimateFixScript Property NEP_ReanimateFixQuest Auto
+{Reanimate Fix Quext script.}
 
-Faction Property NEP_ReanimateFixNoDisintegrateFaction Auto
-{Faction for zombies that should not disintegrate on death.}
+Actor Property PlayerRef Auto
+{The player.}
 
 ;-------------------------------------------------------------------------------
 ;
 ; VARIABLES
 ;
 ;-------------------------------------------------------------------------------
+
+Float fOffsetDistance = 100.0
 
 Float fDelay = 4.0
 
@@ -27,11 +29,36 @@ Float fDelay = 4.0
 ;
 ;-------------------------------------------------------------------------------
 
-Function CleanUpZombie(Actor Zombie)
+Function CheckZombie()
 
-  Self.Clear()
-  NEP_ZombieFormList.RemoveAddedForm(Zombie)
-  Zombie.RemoveFromFaction(NEP_ReanimateFixNoDisintegrateFaction)
+  Actor Zombie = Self.GetReference() as Actor
+
+  If Zombie != None
+    If Zombie.IsDisabled() || Zombie.IsDeleted()
+      Zombie.Kill()
+    EndIf
+
+    UnregisterForUpdate()
+    RegisterForSingleUpdate(fDelay)
+  EndIf
+
+EndFunction
+
+Function MoveZombieToPlayer(Actor Zombie)
+
+  Cell ZombieCell = Zombie.GetParentCell()
+  Cell PlayerCell = PlayerRef.GetParentCell()
+
+  If ZombieCell != PlayerCell
+    If ZombieCell && ZombieCell.IsInterior() \
+        || PlayerCell && PlayerCell.IsInterior()
+      float XOffset = Math.Sin(PlayerRef.GetAngleZ()) * fOffsetDistance
+      float YOffset = Math.Cos(PlayerRef.GetAngleZ()) * fOffsetDistance
+      float ZOffset = 0.0
+
+      Zombie.MoveTo(PlayerRef, XOffset, YOffset, ZOffset, True)
+    EndIf
+  EndIf
 
 EndFunction
 
@@ -41,19 +68,31 @@ EndFunction
 ;
 ;-------------------------------------------------------------------------------
 
-Event OnUnload()
+Event OnLoad()
 
   Actor Zombie = Self.GetReference() as Actor
 
-  If Zombie == None
-    Return
+  If Zombie != None
+    Zombie.PathToReference(PlayerRef, 1.0)
   EndIf
 
-  If Zombie.IsDisabled() || Zombie.IsDeleted()
-    Zombie.Kill()
-  Else
-    RegisterForSingleUpdate(fDelay)
-  EndIf
+EndEvent
+
+Event OnUnload()
+
+  CheckZombie()
+
+EndEvent
+
+Event OnCellDetach()
+
+  CheckZombie()
+
+EndEvent
+
+Event OnDetachedFromCell()
+
+  CheckZombie()
 
 EndEvent
 
@@ -61,25 +100,13 @@ Event OnUpdate()
 
   Actor Zombie = Self.GetReference() as Actor
 
-  If Zombie == None
-    Return
+  If Zombie != None
+    If Zombie.IsDead()
+      NEP_ReanimateFixQuest.CleanUpZombie(Self, Zombie)
+    Else
+      MoveZombieToPlayer(Zombie)
+    EndIf
   EndIf
-
-  If Zombie.IsDead()
-    CleanUpZombie(Zombie)
-  EndIf
-
-EndEvent
-
-Event OnDying(Actor Killer)
-
-  Actor Zombie = Self.GetReference() as Actor
-
-  If Zombie == None
-    Return
-  EndIf
-
-  CleanUpZombie(Zombie)
 
 EndEvent
 
@@ -87,10 +114,8 @@ Event OnDeath(Actor Killer)
 
   Actor Zombie = Self.GetReference() as Actor
 
-  If Zombie == None
-    Return
+  If Zombie != None
+    NEP_ReanimateFixQuest.CleanUpZombie(Self, Zombie)
   EndIf
-
-  CleanUpZombie(Zombie)
 
 EndEvent
