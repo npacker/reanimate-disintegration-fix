@@ -18,6 +18,8 @@ NEP_ReanimateFixScript Property NEP_ReanimateFixQuest Auto
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
+  Debug.Notification("Initiating Zombie target check.")
   NEP_ReanimateFixQuest.TrackZombie(Target)
+  Self.Dispel()
 
 EndEvent

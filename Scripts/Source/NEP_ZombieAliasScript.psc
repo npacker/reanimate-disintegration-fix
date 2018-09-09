@@ -7,6 +7,9 @@ Scriptname NEP_ZombieAliasScript extends ReferenceAlias
 ;
 ;-------------------------------------------------------------------------------
 
+FormList Property NEP_ZombieFormList Auto
+{Form List of tracked Zombies.}
+
 Faction Property NEP_ReanimateFixDeadThrallFaction Auto
 {Faction for zombies affected by Dead Thrall reanimate effects.}
 
@@ -26,8 +29,10 @@ Float fDelay = 4.0
 
 Function CleanUpZombie(Actor Zombie)
 
-  Self.Clear()
+  Debug.Notification("Cleaning up Zombie.")
   Zombie.RemoveFromFaction(NEP_ReanimateFixDeadThrallFaction)
+  NEP_ZombieFormList.RemoveAddedForm(Zombie)
+  Self.Clear()
 
 EndFunction
 

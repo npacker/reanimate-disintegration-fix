@@ -7,6 +7,9 @@ Scriptname NEP_ReanimateEffectScript extends ActiveMagicEffect
 ;
 ;-------------------------------------------------------------------------------
 
+Actor Property PlayerRef Auto
+{The player.}
+
 Spell Property NEP_ReanimateFixTargetCheckSpell Auto
 {Ability that applies the condition-checked effect script to the target.}
 
@@ -19,6 +22,11 @@ Spell Property NEP_ReanimateFixTargetCheckSpell Auto
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  Target.AddSpell(NEP_ReanimateFixTargetCheckSpell)
+  If Caster == PlayerRef
+    Utility.Wait(6.1)
+    Target.AddSpell(NEP_ReanimateFixTargetCheckSpell)
+  EndIf
+
+  Self.Dispel()
 
 EndEvent

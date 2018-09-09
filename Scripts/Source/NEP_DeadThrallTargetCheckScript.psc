@@ -10,6 +10,9 @@ Scriptname NEP_DeadThrallTargetCheckScript extends ActiveMagicEffect
 Faction Property NEP_ReanimateFixDeadThrallFaction Auto
 {Faction for all NPCs under influence of Dead Thrall effects.}
 
+Spell Property NEP_ReanimateFixTargetCheckSpell Auto
+{Ability that applies the condition-checked effect script to the target.}
+
 ;-------------------------------------------------------------------------------
 ;
 ; EVENTS
@@ -18,12 +21,9 @@ Faction Property NEP_ReanimateFixDeadThrallFaction Auto
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
+  Debug.Notification("Tracking Dead Thrall.")
   Target.AddToFaction(NEP_ReanimateFixDeadThrallFaction)
-
-EndEvent
-
-Event OnEffectFinish(Actor Target, Actor Caster)
-
-  Target.RemoveFromFaction(NEP_ReanimateFixDeadThrallFaction)
+  Target.AddSpell(NEP_ReanimateFixTargetCheckSpell)
+  Self.Dispel()
 
 EndEvent
