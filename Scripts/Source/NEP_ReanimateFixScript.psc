@@ -7,6 +7,12 @@ Scriptname NEP_ReanimateFixScript extends Quest
 ;
 ;-------------------------------------------------------------------------------
 
+Actor Property PlayerRef Auto
+{The player.}
+
+Perk Property NEP_ReanimateFixPerk Auto
+{Perk that applies entry point for reanimate effect fix.}
+
 ReferenceAlias[] Property ZombieAliases Auto
 {Aliases for storing reanimated thrall references.}
 
@@ -25,11 +31,8 @@ Function TrackZombie(Actor Target)
   Int Index = ZombieAliases.Length
 
   If NEP_ZombieFormList.HasForm(Target)
-    Debug.Notification("Zombie already tracked. Exiting.")
     Return
   EndIf
-
-  Debug.Notification("Searching for alias for Zombie.")
 
   While Index && !AliasFound
     Index -= 1
@@ -37,28 +40,25 @@ Function TrackZombie(Actor Target)
     ReferenceAlias ZombieAlias = ZombieAliases[Index]
     Actor Zombie = ZombieAlias.GetReference() as Actor
 
-    If Zombie != None
-      If Zombie.IsDead() || Zombie.IsDisabled() || Zombie.IsDeleted()
-        Zombie.DispelAllSpells()
-        Zombie.Kill()
-        ZombieAlias.Clear()
-
-        Zombie = None
-      Else
-        Debug.Notification("Alias already in use.")
-      EndIf
-    EndIf
-
     If Zombie == None
       AliasFound = True
       NEP_ZombieFormList.AddForm(Target)
       ZombieAlias.ForceRefTo(Target as ObjectReference)
-      Debug.Notification("Zombie tracked.")
     EndIf
   EndWhile
 
-  If !AliasFound
-    Debug.Notification("No alias found for Zombie.")
+EndFunction
+
+;-------------------------------------------------------------------------------
+;
+; EVENTS
+;
+;-------------------------------------------------------------------------------
+
+Event OnInit()
+
+  If !PlayerRef.HasPerk(NEP_ReanimateFixPerk)
+    PlayerRef.AddPerk(NEP_ReanimateFixPerk)
   EndIf
 
-EndFunction
+EndEvent

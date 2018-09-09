@@ -1,4 +1,4 @@
-Scriptname NEP_DeadThrallTargetCheckScript extends ActiveMagicEffect
+Scriptname NEP_NoDisintegrateTargetCheckScript extends ActiveMagicEffect
 {Script attached to Dead Thrall target check effect.}
 
 ;-------------------------------------------------------------------------------
@@ -7,11 +7,11 @@ Scriptname NEP_DeadThrallTargetCheckScript extends ActiveMagicEffect
 ;
 ;-------------------------------------------------------------------------------
 
-Faction Property NEP_ReanimateFixDeadThrallFaction Auto
-{Faction for all NPCs under influence of Dead Thrall effects.}
+NEP_ReanimateFixScript Property NEP_ReanimateFixQuest Auto
+{Reanimate Fix Quext script.}
 
-Spell Property NEP_ReanimateFixTargetCheckSpell Auto
-{Ability that applies the condition-checked effect script to the target.}
+Faction Property NEP_ReanimateFixNoDisintegrateFaction Auto
+{Faction for all zombies that should not disintegrate on death.}
 
 ;-------------------------------------------------------------------------------
 ;
@@ -21,9 +21,8 @@ Spell Property NEP_ReanimateFixTargetCheckSpell Auto
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  Debug.Notification("Tracking Dead Thrall.")
-  Target.AddToFaction(NEP_ReanimateFixDeadThrallFaction)
-  Target.AddSpell(NEP_ReanimateFixTargetCheckSpell)
+  Target.AddToFaction(NEP_ReanimateFixNoDisintegrateFaction)
+  NEP_ReanimateFixQuest.TrackZombie(Target)
   Self.Dispel()
 
 EndEvent

@@ -38,8 +38,6 @@ Function TurnToAsh()
     Return
   EndIf
 
-  Debug.Notification("Disintegrating Zombie.")
-
   AshPileCreated = True
 
   Victim.SetCriticalStage(Victim.CritStage_DisintegrateStart)
@@ -71,7 +69,6 @@ EndFunction
 Event OnEffectStart(Actor Target, Actor Caster)
 
   Victim = Target
-  Debug.Notification("Ash pile effect added to Zombie.")
 
 EndEvent
 
