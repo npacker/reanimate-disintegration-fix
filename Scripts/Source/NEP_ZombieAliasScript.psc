@@ -31,13 +31,13 @@ Float fWait = 0.01
 ;
 ;-------------------------------------------------------------------------------
 
-Function CleanUpZombie(Actor Zombie)
+Function UntrackZombie(Actor Zombie)
 
-  Bool Done = NEP_ReanimateFixQuest.CleanUpZombie(Self, Zombie)
+  Bool Done = NEP_ReanimateFixQuest.UntrackZombie(Self, Zombie)
 
   While !Done
     Utility.WaitMenuMode(fWait)
-    Done = NEP_ReanimateFixQuest.CleanUpZombie(Self, Zombie)
+    Done = NEP_ReanimateFixQuest.UntrackZombie(Self, Zombie)
   EndWhile
 
 EndFunction
@@ -105,7 +105,7 @@ Event OnUpdate()
 
   If Zombie != None
     If Zombie.IsDead()
-      CleanUpZombie(Zombie)
+      UntrackZombie(Zombie)
     Else
       MoveZombieToPlayer(Zombie)
     EndIf
@@ -118,7 +118,7 @@ Event OnDeath(Actor Killer)
   Actor Zombie = Self.GetReference() as Actor
 
   If Zombie != None
-    CleanUpZombie(Zombie)
+    UntrackZombie(Zombie)
   EndIf
 
 EndEvent

@@ -33,8 +33,6 @@ Event OnEffectStart(Actor Target, Actor Caster)
     Target.AddToFaction(SpellFaction)
   EndIf
 
-  Debug.Trace("Reanimate cast on target: " + Target)
-
   Bool Done = NEP_ReanimateFixQuest.TrackZombie(Target)
 
   While !Done

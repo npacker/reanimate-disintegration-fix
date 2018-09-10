@@ -10,9 +10,6 @@ Scriptname NEP_ReanimateFixScript extends Quest
 ReferenceAlias[] Property ZombieAliases Auto
 {Aliases for storing reanimated thrall references.}
 
-FormList Property NEP_ZombieFormList Auto
-{Form list of tracked Zombies.}
-
 Faction Property NEP_ReanimateFixNoDisintegrateFaction Auto
 {Faction for zombies that should not disintegrate on death.}
 
@@ -22,11 +19,10 @@ Faction Property NEP_ReanimateFixNoDisintegrateFaction Auto
 ;
 ;-------------------------------------------------------------------------------
 
-Function InternalCleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
+Function CleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
 
-  ZombieAlias.Clear()
   Zombie.Kill()
-  NEP_ZombieFormList.RemoveAddedForm(Zombie)
+  ZombieAlias.Clear()
   Zombie.RemoveFromFaction(NEP_ReanimateFixNoDisintegrateFaction)
 
 EndFunction
@@ -35,35 +31,35 @@ Bool Function TrackZombie(Actor Target)
 
   GoToState("Busy")
 
-  Bool AliasFound = False
+  ReferenceAlias SelectedAlias = None
+  ReferenceAlias CurrentAlias = None
+  Actor Current = None
   Int Index = ZombieAliases.Length
 
-  If NEP_ZombieFormList.HasForm(Target)
-    GoToState("")
-
-    Return True
-  EndIf
-
-  While Index && !AliasFound
+  While Index
     Index -= 1
+    CurrentAlias = ZombieAliases[Index]
+    Current = CurrentAlias.GetReference() as Actor
 
-    ReferenceAlias ZombieAlias = ZombieAliases[Index]
-    Actor Zombie = ZombieAlias.GetReference() as Actor
+    If Current
+      If Current.IsDead() || Current.IsDisabled() || Current.IsDeleted()
+        CleanUpZombie(CurrentAlias, Current)
 
-    If Zombie != None
-      If Zombie.IsDead() || Zombie.IsDisabled() || Zombie.IsDeleted()
-        InternalCleanUpZombie(ZombieAlias, Zombie)
-
-        Zombie = None
+        Current = None
       EndIf
     EndIf
 
-    If Zombie == None
-      AliasFound = True
-      NEP_ZombieFormList.AddForm(Target)
-      ZombieAlias.ForceRefTo(Target as ObjectReference)
+    If !Current && !SelectedAlias
+      SelectedAlias = CurrentAlias
+    ElseIf Current == Target
+      SelectedAlias = None
+      Index = 0
     EndIf
   EndWhile
+
+  If SelectedAlias
+    SelectedAlias.ForceRefTo(Target as ObjectReference)
+  EndIf
 
   GoToState("")
 
@@ -71,10 +67,10 @@ Bool Function TrackZombie(Actor Target)
 
 EndFunction
 
-Bool Function CleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
+Bool Function UntrackZombie(ReferenceAlias ZombieAlias, Actor Zombie)
 
   GoToState("Busy")
-  InternalCleanUpZombie(ZombieAlias, Zombie)
+  CleanUpZombie(ZombieAlias, Zombie)
   GoToState("")
 
   Return True
@@ -87,7 +83,7 @@ State Busy
     Return False
   EndFunction
 
-  Bool Function CleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
+  Bool Function UntrackZombie(ReferenceAlias ZombieAlias, Actor Zombie)
     Return False
   EndFunction
 
