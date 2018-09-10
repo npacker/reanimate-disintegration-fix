@@ -15,6 +15,14 @@ Faction Property SpellFaction = None Auto
 
 ;-------------------------------------------------------------------------------
 ;
+; VARIABLES
+;
+;-------------------------------------------------------------------------------
+
+Float fWait = 0.01
+
+;-------------------------------------------------------------------------------
+;
 ; EVENTS
 ;
 ;-------------------------------------------------------------------------------
@@ -25,7 +33,15 @@ Event OnEffectStart(Actor Target, Actor Caster)
     Target.AddToFaction(SpellFaction)
   EndIf
 
-  NEP_ReanimateFixQuest.TrackZombie(Target)
+  Debug.Trace("Reanimate cast on target: " + Target)
+
+  Bool Done = NEP_ReanimateFixQuest.TrackZombie(Target)
+
+  While !Done
+    Utility.WaitMenuMode(fWait)
+    Done = NEP_ReanimateFixQuest.TrackZombie(Target)
+  EndWhile
+
   Self.Dispel()
 
 EndEvent

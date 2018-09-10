@@ -16,25 +16,32 @@ FormList Property NEP_ZombieFormList Auto
 Faction Property NEP_ReanimateFixNoDisintegrateFaction Auto
 {Faction for zombies that should not disintegrate on death.}
 
-Actor Property PlayerRef Auto
-{The player.}
-
-Perk Property NEP_ReanimateFixPerk Auto
-{Perk that applies entry point for reanimate effect fix.}
-
 ;-------------------------------------------------------------------------------
 ;
 ; FUNCTIONS
 ;
 ;-------------------------------------------------------------------------------
 
-Function TrackZombie(Actor Target)
+Function InternalCleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
+
+  ZombieAlias.Clear()
+  Zombie.Kill()
+  NEP_ZombieFormList.RemoveAddedForm(Zombie)
+  Zombie.RemoveFromFaction(NEP_ReanimateFixNoDisintegrateFaction)
+
+EndFunction
+
+Bool Function TrackZombie(Actor Target)
+
+  GoToState("Busy")
 
   Bool AliasFound = False
   Int Index = ZombieAliases.Length
 
   If NEP_ZombieFormList.HasForm(Target)
-    Return
+    GoToState("")
+
+    Return True
   EndIf
 
   While Index && !AliasFound
@@ -45,7 +52,7 @@ Function TrackZombie(Actor Target)
 
     If Zombie != None
       If Zombie.IsDead() || Zombie.IsDisabled() || Zombie.IsDeleted()
-        CleanUpZombie(ZombieAlias, Zombie)
+        InternalCleanUpZombie(ZombieAlias, Zombie)
 
         Zombie = None
       EndIf
@@ -58,27 +65,30 @@ Function TrackZombie(Actor Target)
     EndIf
   EndWhile
 
-EndFunction
+  GoToState("")
 
-Function CleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
-
-  ZombieAlias.Clear()
-  Zombie.Kill()
-  NEP_ZombieFormList.RemoveAddedForm(Zombie)
-  Zombie.RemoveFromFaction(NEP_ReanimateFixNoDisintegrateFaction)
+  Return True
 
 EndFunction
 
-;-------------------------------------------------------------------------------
-;
-; EVENTS
-;
-;-------------------------------------------------------------------------------
+Bool Function CleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
 
-Event OnInit()
+  GoToState("Busy")
+  InternalCleanUpZombie(ZombieAlias, Zombie)
+  GoToState("")
 
-  If !PlayerRef.HasPerk(NEP_ReanimateFixPerk)
-    PlayerRef.AddPerk(NEP_ReanimateFixPerk)
-  EndIf
+  Return True
 
-EndEvent
+EndFunction
+
+State Busy
+
+  Bool Function TrackZombie(Actor Target)
+    Return False
+  EndFunction
+
+  Bool Function CleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
+    Return False
+  EndFunction
+
+EndState

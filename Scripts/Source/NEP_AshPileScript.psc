@@ -22,8 +22,6 @@ Float fDelayEnd = 1.65
 
 Float fShaderDuration = 4.0
 
-Bool AshPileCreated = False
-
 Actor Victim = None
 
 ;-------------------------------------------------------------------------------
@@ -34,11 +32,14 @@ Actor Victim = None
 
 Function TurnToAsh()
 
-  If AshPileCreated || !Victim.IsDead()
+  GoToState("Busy")
+
+  If !Victim.IsDead()
+    GoToState("Ready")
+
     Return
   EndIf
 
-  AshPileCreated = True
   Victim.SetCriticalStage(Victim.CritStage_DisintegrateStart)
 
   If Victim.Is3DLoaded()
@@ -55,7 +56,6 @@ Function TurnToAsh()
   EndIf
 
   Victim.SetCriticalStage(Victim.CritStage_DisintegrateEnd)
-  Self.Dispel()
 
 EndFunction
 
@@ -65,20 +65,34 @@ EndFunction
 ;
 ;-------------------------------------------------------------------------------
 
-Event OnEffectStart(Actor Target, Actor Caster)
+Auto State Ready
 
-  Victim = Target
+  Event OnEffectStart(Actor Target, Actor Caster)
 
-EndEvent
+    Victim = Target
 
-Event OnDying(Actor Killer)
+  EndEvent
 
-  TurnToAsh()
+  Event OnDying(Actor Killer)
 
-EndEvent
+    TurnToAsh()
 
-Event OnDeath(Actor Killer)
+  EndEvent
 
-  TurnToAsh()
+  Event OnDeath(Actor Killer)
 
-EndEvent
+    TurnToAsh()
+
+  EndEvent
+
+EndState
+
+State Busy
+
+  Event OnDying(Actor Killer)
+  EndEvent
+
+  Event OnDeath(Actor Killer)
+  EndEvent
+
+EndState

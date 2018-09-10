@@ -23,11 +23,24 @@ Float fOffsetDistance = 100.0
 
 Float fDelay = 4.0
 
+Float fWait = 0.01
+
 ;-------------------------------------------------------------------------------
 ;
 ; FUNCTIONS
 ;
 ;-------------------------------------------------------------------------------
+
+Function CleanUpZombie(Actor Zombie)
+
+  Bool Done = NEP_ReanimateFixQuest.CleanUpZombie(Self, Zombie)
+
+  While !Done
+    Utility.WaitMenuMode(fWait)
+    Done = NEP_ReanimateFixQuest.CleanUpZombie(Self, Zombie)
+  EndWhile
+
+EndFunction
 
 Function CheckZombie()
 
@@ -92,7 +105,7 @@ Event OnUpdate()
 
   If Zombie != None
     If Zombie.IsDead()
-      NEP_ReanimateFixQuest.CleanUpZombie(Self, Zombie)
+      CleanUpZombie(Zombie)
     Else
       MoveZombieToPlayer(Zombie)
     EndIf
@@ -105,7 +118,7 @@ Event OnDeath(Actor Killer)
   Actor Zombie = Self.GetReference() as Actor
 
   If Zombie != None
-    NEP_ReanimateFixQuest.CleanUpZombie(Self, Zombie)
+    CleanUpZombie(Zombie)
   EndIf
 
 EndEvent
