@@ -7,7 +7,7 @@ Scriptname NEP_ZombieAliasScript extends ReferenceAlias
 ;
 ;-------------------------------------------------------------------------------
 
-NEP_ReanimateFixScript Property NEP_ReanimateFixQuest Auto
+NEP_ReanimateFixScript Property NEP_ReanimateFix Auto
 {Reanimate Fix Quext script.}
 
 Actor Property PlayerRef Auto
@@ -33,11 +33,11 @@ Float fWait = 0.01
 
 Function UntrackZombie(Actor Zombie)
 
-  Bool Done = NEP_ReanimateFixQuest.UntrackZombie(Self, Zombie)
+  Bool Done = NEP_ReanimateFix.UntrackZombie(Self, Zombie)
 
   While !Done
     Utility.WaitMenuMode(fWait)
-    Done = NEP_ReanimateFixQuest.UntrackZombie(Self, Zombie)
+    Done = NEP_ReanimateFix.UntrackZombie(Self, Zombie)
   EndWhile
 
 EndFunction
@@ -46,7 +46,7 @@ Function CheckZombie()
 
   Actor Zombie = Self.GetReference() as Actor
 
-  If Zombie != None
+  If Zombie
     If Zombie.IsDisabled() || Zombie.IsDeleted()
       Zombie.Kill()
     EndIf
@@ -103,7 +103,7 @@ Event OnUpdate()
 
   Actor Zombie = Self.GetReference() as Actor
 
-  If Zombie != None
+  If Zombie
     If Zombie.IsDead()
       UntrackZombie(Zombie)
     Else
@@ -117,7 +117,7 @@ Event OnDeath(Actor Killer)
 
   Actor Zombie = Self.GetReference() as Actor
 
-  If Zombie != None
+  If Zombie
     UntrackZombie(Zombie)
   EndIf
 

@@ -10,8 +10,8 @@ Scriptname NEP_ReanimateFixScript extends Quest
 ReferenceAlias[] Property ZombieAliases Auto
 {Aliases for storing reanimated thrall references.}
 
-Faction Property NEP_ReanimateFixNoDisintegrateFaction Auto
-{Faction for zombies that should not disintegrate on death.}
+FormList Property NEP_ReanimateFixSpellFactionList Auto
+{Form List of factions that are applied to reanimated zombies.}
 
 ;-------------------------------------------------------------------------------
 ;
@@ -23,7 +23,14 @@ Function CleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
 
   Zombie.Kill()
   ZombieAlias.Clear()
-  Zombie.RemoveFromFaction(NEP_ReanimateFixNoDisintegrateFaction)
+
+  Int Index = NEP_ReanimateFixSpellFactionList.GetSize()
+
+  While Index
+    Index -= 1
+
+    Zombie.RemoveFromFaction(NEP_ReanimateFixSpellFactionList.GetAt(Index) as Faction)
+  EndWhile
 
 EndFunction
 

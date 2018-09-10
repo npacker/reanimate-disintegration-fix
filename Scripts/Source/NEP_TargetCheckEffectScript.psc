@@ -7,7 +7,7 @@ Scriptname NEP_TargetCheckEffectScript extends ActiveMagicEffect
 ;
 ;-------------------------------------------------------------------------------
 
-NEP_ReanimateFixScript Property NEP_ReanimateFixQuest Auto
+NEP_ReanimateFixScript Property NEP_ReanimateFix Auto
 {Reanimate Fix Quext script.}
 
 Faction Property SpellFaction = None Auto
@@ -33,11 +33,11 @@ Event OnEffectStart(Actor Target, Actor Caster)
     Target.AddToFaction(SpellFaction)
   EndIf
 
-  Bool Done = NEP_ReanimateFixQuest.TrackZombie(Target)
+  Bool Done = NEP_ReanimateFix.TrackZombie(Target)
 
   While !Done
     Utility.WaitMenuMode(fWait)
-    Done = NEP_ReanimateFixQuest.TrackZombie(Target)
+    Done = NEP_ReanimateFix.TrackZombie(Target)
   EndWhile
 
   Self.Dispel()
