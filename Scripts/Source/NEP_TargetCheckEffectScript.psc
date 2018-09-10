@@ -10,17 +10,8 @@ Scriptname NEP_TargetCheckEffectScript extends ActiveMagicEffect
 NEP_ReanimateFixScript Property NEP_ReanimateFixQuest Auto
 {Reanimate Fix Quext script.}
 
-;-------------------------------------------------------------------------------
-;
-; FUNCTIONS
-;
-;-------------------------------------------------------------------------------
-
-Function TrackZombie(Actor Target)
-
-  NEP_ReanimateFixQuest.TrackZombie(Target)
-
-EndFunction
+Faction Property SpellFaction = None Auto
+{Optional faction to apply to the target.}
 
 ;-------------------------------------------------------------------------------
 ;
@@ -30,7 +21,11 @@ EndFunction
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  TrackZombie(Target)
+  If SpellFaction
+    Target.AddToFaction(SpellFaction)
+  EndIf
+
+  NEP_ReanimateFixQuest.TrackZombie(Target)
   Self.Dispel()
 
 EndEvent
