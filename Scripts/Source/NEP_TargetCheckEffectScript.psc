@@ -12,13 +12,25 @@ NEP_ReanimateFixScript Property NEP_ReanimateFixQuest Auto
 
 ;-------------------------------------------------------------------------------
 ;
+; FUNCTIONS
+;
+;-------------------------------------------------------------------------------
+
+Function TrackZombie(Actor Target)
+
+  NEP_ReanimateFixQuest.TrackZombie(Target)
+
+EndFunction
+
+;-------------------------------------------------------------------------------
+;
 ; EVENTS
 ;
 ;-------------------------------------------------------------------------------
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  NEP_ReanimateFixQuest.TrackZombie(Target)
+  TrackZombie(Target)
   Self.Dispel()
 
 EndEvent

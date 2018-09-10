@@ -68,16 +68,6 @@ EndFunction
 ;
 ;-------------------------------------------------------------------------------
 
-Event OnLoad()
-
-  Actor Zombie = Self.GetReference() as Actor
-
-  If Zombie != None
-    Zombie.PathToReference(PlayerRef, 1.0)
-  EndIf
-
-EndEvent
-
 Event OnUnload()
 
   CheckZombie()
