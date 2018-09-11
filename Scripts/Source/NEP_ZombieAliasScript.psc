@@ -21,7 +21,9 @@ Actor Property PlayerRef Auto
 
 Float fOffsetDistance = 100.0
 
-Float fDelay = 4.0
+Float fUpdateDelay = 1.0
+
+Float fOnDyingDelay = 0.5
 
 Float fWait = 0.01
 
@@ -31,33 +33,31 @@ Float fWait = 0.01
 ;
 ;-------------------------------------------------------------------------------
 
-Function UntrackZombie(Actor Zombie)
-
-  Bool Done = NEP_ReanimateFix.UntrackZombie(Self, Zombie)
-
-  While !Done
-    Utility.WaitMenuMode(fWait)
-    Done = NEP_ReanimateFix.UntrackZombie(Self, Zombie)
-  EndWhile
-
-EndFunction
-
 Function CheckZombie()
 
   Actor Zombie = Self.GetReference() as Actor
 
   If Zombie
-    If Zombie.IsDisabled() || Zombie.IsDeleted()
-      Zombie.Kill()
+    If Zombie.IsDead() || Zombie.IsDisabled() || Zombie.IsDeleted() \
+        || !Zombie.IsCommandedActor()
+      UntrackZombie(Zombie)
+    Else
+      MoveZombieToPlayer(Zombie)
     EndIf
-
-    UnregisterForUpdate()
-    RegisterForSingleUpdate(fDelay)
   EndIf
 
 EndFunction
 
+State Moving
+
+  Function MoveZombieToPlayer(Actor Zombie)
+  EndFunction
+
+EndState
+
 Function MoveZombieToPlayer(Actor Zombie)
+
+  GoToState("Moving")
 
   Cell ZombieCell = Zombie.GetParentCell()
   Cell PlayerCell = PlayerRef.GetParentCell()
@@ -73,6 +73,39 @@ Function MoveZombieToPlayer(Actor Zombie)
     EndIf
   EndIf
 
+  GoToState("")
+
+EndFunction
+
+State Dying
+
+  Function UntrackZombie(Actor Zombie)
+  EndFunction
+
+  Event OnUpdate()
+  EndEvent
+
+  Event OnDying(Actor Killer)
+  EndEvent
+
+  Event OnDeath(Actor Killer)
+  EndEvent
+
+EndState
+
+Function UntrackZombie(Actor Zombie)
+
+  GoToState("Dying")
+
+  Bool Done = NEP_ReanimateFix.UntrackZombie(Self, Zombie)
+
+  While !Done
+    Utility.Wait(fWait)
+    Done = NEP_ReanimateFix.UntrackZombie(Self, Zombie)
+  EndWhile
+
+  GoToState("")
+
 EndFunction
 
 ;-------------------------------------------------------------------------------
@@ -83,42 +116,30 @@ EndFunction
 
 Event OnUnload()
 
-  CheckZombie()
+  RegisterForSingleUpdate(fUpdateDelay)
 
 EndEvent
 
 Event OnCellDetach()
 
-  CheckZombie()
-
-EndEvent
-
-Event OnDetachedFromCell()
-
-  CheckZombie()
+  RegisterForSingleUpdate(fUpdateDelay)
 
 EndEvent
 
 Event OnUpdate()
 
-  Actor Zombie = Self.GetReference() as Actor
+  CheckZombie()
 
-  If Zombie
-    If Zombie.IsDead()
-      UntrackZombie(Zombie)
-    Else
-      MoveZombieToPlayer(Zombie)
-    EndIf
-  EndIf
+EndEvent
+
+Event OnDying(Actor Killer)
+
+  RegisterForSingleUpdate(fOnDyingDelay)
 
 EndEvent
 
 Event OnDeath(Actor Killer)
 
-  Actor Zombie = Self.GetReference() as Actor
-
-  If Zombie
-    UntrackZombie(Zombie)
-  EndIf
+  RegisterForSingleUpdate(fWait)
 
 EndEvent

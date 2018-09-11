@@ -28,7 +28,6 @@ Function CleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
 
   While Index
     Index -= 1
-
     Zombie.RemoveFromFaction(NEP_ReanimateFixSpellFactionList.GetAt(Index) as Faction)
   EndWhile
 
@@ -49,9 +48,9 @@ Bool Function TrackZombie(Actor Target)
     Current = CurrentAlias.GetReference() as Actor
 
     If Current
-      If Current.IsDead() || Current.IsDisabled() || Current.IsDeleted()
+      If Current.IsDead() || Current.IsDisabled() || Current.IsDeleted() \
+          || !Current.IsCommandedActor()
         CleanUpZombie(CurrentAlias, Current)
-
         Current = None
       EndIf
     EndIf

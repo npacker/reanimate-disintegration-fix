@@ -36,7 +36,7 @@ Event OnEffectStart(Actor Target, Actor Caster)
   Bool Done = NEP_ReanimateFix.TrackZombie(Target)
 
   While !Done
-    Utility.WaitMenuMode(fWait)
+    Utility.Wait(fWait)
     Done = NEP_ReanimateFix.TrackZombie(Target)
   EndWhile
 
