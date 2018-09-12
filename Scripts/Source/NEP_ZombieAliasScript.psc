@@ -3,6 +3,14 @@ Scriptname NEP_ZombieAliasScript extends ReferenceAlias
 
 ;-------------------------------------------------------------------------------
 ;
+; IMPORTS
+;
+;-------------------------------------------------------------------------------
+
+Import NEP_ReanimateFixLib
+
+;-------------------------------------------------------------------------------
+;
 ; PROPERTIES
 ;
 ;-------------------------------------------------------------------------------
@@ -19,8 +27,6 @@ Actor Property PlayerRef Auto
 ;
 ;-------------------------------------------------------------------------------
 
-Float fOffsetDistance = 100.0
-
 Float fUpdateDelay = 1.0
 
 Float fOnDyingDelay = 0.5
@@ -33,54 +39,16 @@ Float fWait = 0.01
 ;
 ;-------------------------------------------------------------------------------
 
-Function CheckZombie()
-
-  Actor Zombie = Self.GetReference() as Actor
-
-  If Zombie
-    If Zombie.IsDead() || Zombie.IsDisabled() || Zombie.IsDeleted() \
-        || !Zombie.IsCommandedActor()
-      UntrackZombie(Zombie)
-    Else
-      MoveZombieToPlayer(Zombie)
-    EndIf
-  EndIf
-
-EndFunction
-
-State Moving
-
-  Function MoveZombieToPlayer(Actor Zombie)
-  EndFunction
-
-EndState
-
-Function MoveZombieToPlayer(Actor Zombie)
-
-  GoToState("Moving")
-
-  Cell ZombieCell = Zombie.GetParentCell()
-  Cell PlayerCell = PlayerRef.GetParentCell()
-
-  If ZombieCell != PlayerCell
-    If ZombieCell && ZombieCell.IsInterior() \
-        || PlayerCell && PlayerCell.IsInterior()
-      float XOffset = Math.Sin(PlayerRef.GetAngleZ()) * fOffsetDistance
-      float YOffset = Math.Cos(PlayerRef.GetAngleZ()) * fOffsetDistance
-      float ZOffset = 0.0
-
-      Zombie.MoveTo(PlayerRef, XOffset, YOffset, ZOffset, True)
-    EndIf
-  EndIf
-
-  GoToState("")
-
-EndFunction
-
 State Dying
 
   Function UntrackZombie(Actor Zombie)
   EndFunction
+
+  Event OnUnload()
+  EndEvent
+
+  Event OnCellDetach()
+  EndEvent
 
   Event OnUpdate()
   EndEvent
@@ -128,7 +96,15 @@ EndEvent
 
 Event OnUpdate()
 
-  CheckZombie()
+  Actor Zombie = Self.GetReference() as Actor
+
+  If Zombie
+    If ZombieHasExpired(Zombie)
+      UntrackZombie(Zombie)
+    Else
+      MoveZombieToPlayer(Zombie, PlayerRef)
+    EndIf
+  EndIf
 
 EndEvent
 

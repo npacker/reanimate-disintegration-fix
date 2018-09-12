@@ -15,14 +15,26 @@ Perk Property NEP_ReanimateFixPerk Auto
 
 ;-------------------------------------------------------------------------------
 ;
+; FUNCTIONS
+;
+;-------------------------------------------------------------------------------
+
+Function AddReanimateFixPerk()
+
+  If !PlayerRef.HasPerk(NEP_ReanimateFixPerk)
+    PlayerRef.AddPerk(NEP_ReanimateFixPerk)
+  EndIf
+
+EndFunction
+
+;-------------------------------------------------------------------------------
+;
 ; EVENTS
 ;
 ;-------------------------------------------------------------------------------
 
 Event OnInit()
 
-  If !PlayerRef.HasPerk(NEP_ReanimateFixPerk)
-    PlayerRef.AddPerk(NEP_ReanimateFixPerk)
-  EndIf
+  AddReanimateFixPerk()
 
 EndEvent

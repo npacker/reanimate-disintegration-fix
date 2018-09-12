@@ -3,6 +3,14 @@ Scriptname NEP_ReanimateFixScript extends Quest
 
 ;-------------------------------------------------------------------------------
 ;
+; IMPORTS
+;
+;-------------------------------------------------------------------------------
+
+Import NEP_ReanimateFixLib
+
+;-------------------------------------------------------------------------------
+;
 ; PROPERTIES
 ;
 ;-------------------------------------------------------------------------------
@@ -19,19 +27,17 @@ FormList Property NEP_ReanimateFixSpellFactionList Auto
 ;
 ;-------------------------------------------------------------------------------
 
-Function CleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie)
+State Busy
 
-  Zombie.Kill()
-  ZombieAlias.Clear()
+  Bool Function TrackZombie(Actor Target)
+    Return False
+  EndFunction
 
-  Int Index = NEP_ReanimateFixSpellFactionList.GetSize()
+  Bool Function UntrackZombie(ReferenceAlias ZombieAlias, Actor Zombie)
+    Return False
+  EndFunction
 
-  While Index
-    Index -= 1
-    Zombie.RemoveFromFaction(NEP_ReanimateFixSpellFactionList.GetAt(Index) as Faction)
-  EndWhile
-
-EndFunction
+EndState
 
 Bool Function TrackZombie(Actor Target)
 
@@ -48,9 +54,8 @@ Bool Function TrackZombie(Actor Target)
     Current = CurrentAlias.GetReference() as Actor
 
     If Current
-      If Current.IsDead() || Current.IsDisabled() || Current.IsDeleted() \
-          || !Current.IsCommandedActor()
-        CleanUpZombie(CurrentAlias, Current)
+      If ZombieHasExpired(Current)
+        CleanUpZombie(CurrentAlias, Current, NEP_ReanimateFixSpellFactionList)
         Current = None
       EndIf
     EndIf
@@ -76,21 +81,9 @@ EndFunction
 Bool Function UntrackZombie(ReferenceAlias ZombieAlias, Actor Zombie)
 
   GoToState("Busy")
-  CleanUpZombie(ZombieAlias, Zombie)
+  CleanUpZombie(ZombieAlias, Zombie, NEP_ReanimateFixSpellFactionList)
   GoToState("")
 
   Return True
 
 EndFunction
-
-State Busy
-
-  Bool Function TrackZombie(Actor Target)
-    Return False
-  EndFunction
-
-  Bool Function UntrackZombie(ReferenceAlias ZombieAlias, Actor Zombie)
-    Return False
-  EndFunction
-
-EndState
