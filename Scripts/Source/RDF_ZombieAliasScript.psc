@@ -59,6 +59,24 @@ State Dying
   Event OnDeath(Actor Killer)
   EndEvent
 
+  Event AliasControllerReady(String EventName, String CallbackName)
+
+    UnregisterForModEvent("RDF_AliasControllerReady")
+
+    Actor Zombie = Self.GetReference() as Actor
+
+    If Zombie
+      Bool Done = Controller.UntrackZombie(Self, Zombie)
+
+      If !Done
+        RegisterForModEvent("RDF_AliasControllerReady", "AliasControllerReady")
+      Else
+        GoToState("")
+      EndIf
+    EndIf
+
+  EndEvent
+
 EndState
 
 Function UntrackZombie(Actor Zombie)
@@ -67,12 +85,11 @@ Function UntrackZombie(Actor Zombie)
 
   Bool Done = Controller.UntrackZombie(Self, Zombie)
 
-  While !Done
-    Utility.Wait(fWait)
-    Done = Controller.UntrackZombie(Self, Zombie)
-  EndWhile
-
-  GoToState("")
+  If !Done
+    RegisterForModEvent("RDF_AliasControllerReady", "AliasControllerReady")
+  Else
+    GoToState("")
+  EndIf
 
 EndFunction
 
@@ -119,5 +136,11 @@ Event OnDeath(Actor Killer)
 
   Debug.TraceAndBox("Zombie Died: " + Self.GetReference())
   RegisterForSingleUpdate(fWait)
+
+EndEvent
+
+Event AliasControllerReady(String EventName, String CallbackName)
+
+  UnregisterForModEvent("RDF_AliasControllerReady")
 
 EndEvent

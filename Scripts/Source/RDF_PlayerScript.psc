@@ -21,7 +21,7 @@ Actor Property PlayerRef Auto
 
 Event OnPlayerLoadGame()
 
-  Debug.TraceAndBox("Player Has Loaded Game")
+  Debug.TraceAndBox("Reanimate Disintegration Fix: Player Has Loaded Game")
   RDF_Init.AddReanimateFixPerk()
 
 EndEvent

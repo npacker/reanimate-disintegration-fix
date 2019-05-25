@@ -74,6 +74,7 @@ Bool Function TrackZombie(Actor Target)
   EndIf
 
   GoToState("")
+  SendModEvent("AliasControllerReady")
 
   Return True
 
@@ -84,6 +85,7 @@ Bool Function UntrackZombie(ReferenceAlias ZombieAlias, Actor Zombie)
   GoToState("Busy")
   CleanUpZombie(ZombieAlias, Zombie, RDF_SpellFactionList)
   GoToState("")
+  SendModEvent("AliasControllerReady")
 
   Return True
 

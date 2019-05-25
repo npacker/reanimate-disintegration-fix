@@ -23,7 +23,7 @@ Function AddReanimateFixPerk()
 
   If !PlayerRef.HasPerk(RDF_ReanimateFixPerk)
     PlayerRef.AddPerk(RDF_ReanimateFixPerk)
-    Debug.Notification("Added Reanimate Fix Perk")
+    Debug.Notification("Added Reanimate Disintegration Fix Perk")
   EndIf
 
 EndFunction
@@ -36,7 +36,7 @@ EndFunction
 
 Event OnInit()
 
-  Debug.Notification("Reanimate Fix Quest Started")
+  Debug.Notification("Reanimate Disintegration Fix Quest Started")
   AddReanimateFixPerk()
 
 EndEvent

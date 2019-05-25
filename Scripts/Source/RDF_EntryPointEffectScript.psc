@@ -19,7 +19,7 @@ Faction Property SpellFaction = None Auto
 ;
 ;-------------------------------------------------------------------------------
 
-Float fWait = 0.01
+Actor Zombie
 
 ;-------------------------------------------------------------------------------
 ;
@@ -29,21 +29,40 @@ Float fWait = 0.01
 
 Event OnEffectStart(Actor Target, Actor Caster)
 
-  Debug.TraceAndBox("Entry Point Effect Start: " + Target)
+  Zombie = Target
+
+  Debug.TraceAndBox("Entry Point Effect Start: " + Zombie)
 
   If SpellFaction
-    Target.AddToFaction(SpellFaction)
+    Zombie.AddToFaction(SpellFaction)
   EndIf
 
-  Bool Done = Controller.TrackZombie(Target)
+  Bool Done = Controller.TrackZombie(Zombie)
 
-  While !Done
-    Utility.Wait(fWait)
-    Done = Controller.TrackZombie(Target)
-  EndWhile
+  If !Done
+    RegisterForModEvent("RDF_AliasControllerReady", "AliasControllerReady")
+  Else
+    Self.Dispel()
+  EndIf
 
-  Debug.TraceAndBox("Entry Point Effect End: " + Target)
+EndEvent
 
-  Self.Dispel()
+Event OnEffectFinish(Actor Target, Actor Caster)
+
+  Debug.TraceAndBox("Entry Point Effect End: " + Zombie)
+
+EndEvent
+
+Event AliasControllerReady(String EventName, String CallbackName)
+
+  UnregisterForModEvent("RDF_AliasControllerReady")
+
+  Bool Done = Controller.TrackZombie(Zombie)
+
+  If !Done
+    RegisterForModEvent("RDF_AliasControllerReady", "AliasControllerReady")
+  Else
+    Self.Dispel()
+  EndIf
 
 EndEvent
