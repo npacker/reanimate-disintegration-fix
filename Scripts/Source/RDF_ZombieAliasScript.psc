@@ -39,6 +39,26 @@ Float fWait = 0.01
 ;
 ;-------------------------------------------------------------------------------
 
+Function UntrackZombie(Actor Zombie)
+
+  GoToState("Dying")
+
+  Bool Done = Controller.UntrackZombie(Self, Zombie)
+
+  If !Done
+    RegisterForModEvent("RDF_AliasControllerReady", "AliasControllerReady")
+  Else
+    GoToState("")
+  EndIf
+
+EndFunction
+
+;-------------------------------------------------------------------------------
+;
+; EVENTS
+;
+;-------------------------------------------------------------------------------
+
 State Dying
 
   Function UntrackZombie(Actor Zombie)
@@ -78,26 +98,6 @@ State Dying
   EndEvent
 
 EndState
-
-Function UntrackZombie(Actor Zombie)
-
-  GoToState("Dying")
-
-  Bool Done = Controller.UntrackZombie(Self, Zombie)
-
-  If !Done
-    RegisterForModEvent("RDF_AliasControllerReady", "AliasControllerReady")
-  Else
-    GoToState("")
-  EndIf
-
-EndFunction
-
-;-------------------------------------------------------------------------------
-;
-; EVENTS
-;
-;-------------------------------------------------------------------------------
 
 Event OnUnload()
 

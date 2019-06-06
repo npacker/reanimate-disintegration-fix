@@ -18,7 +18,7 @@ Import RDF_Lib
 ReferenceAlias[] Property ZombieAliases Auto
 {Aliases for storing reanimated thrall references.}
 
-FormList Property RDF_SpellFactionList Auto
+FormList Property RDF_ZombieFactionsList Auto
 {Form List of factions that are applied to reanimated zombies.}
 
 ;-------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ Bool Function TrackZombie(Actor Target)
 
     If Current
       If ZombieHasExpired(Current)
-        CleanUpZombie(CurrentAlias, Current, RDF_SpellFactionList)
+        CleanUpZombie(CurrentAlias, Current, RDF_ZombieFactionsList)
         Current = None
       EndIf
     EndIf
@@ -83,7 +83,7 @@ EndFunction
 Bool Function UntrackZombie(ReferenceAlias ZombieAlias, Actor Zombie)
 
   GoToState("Busy")
-  CleanUpZombie(ZombieAlias, Zombie, RDF_SpellFactionList)
+  CleanUpZombie(ZombieAlias, Zombie, RDF_ZombieFactionsList)
   GoToState("")
   SendModEvent("AliasControllerReady")
 

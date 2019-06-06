@@ -10,8 +10,8 @@ Scriptname RDF_EntryPointEffectScript extends ActiveMagicEffect
 RDF_AliasController Property Controller Auto
 {Reanimate Disintegration Fix alias controller script.}
 
-Faction Property SpellFaction = None Auto
-{Optional faction to apply to the target.}
+Faction[] Property ZombieFactions Auto
+{Optional factions to add the target to, for determining their zombie effects.}
 
 ;-------------------------------------------------------------------------------
 ;
@@ -33,9 +33,12 @@ Event OnEffectStart(Actor Target, Actor Caster)
 
   Debug.TraceAndBox("Entry Point Effect Start: " + Zombie)
 
-  If SpellFaction
-    Zombie.AddToFaction(SpellFaction)
-  EndIf
+  Int i = ZombieFactions.Length
+
+  While i
+    i -= 1
+    Zombie.AddToFaction(ZombieFactions[i])
+  EndWhile
 
   Bool Done = Controller.TrackZombie(Zombie)
 

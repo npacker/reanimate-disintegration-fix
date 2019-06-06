@@ -23,7 +23,7 @@ Function AddReanimateFixPerk()
 
   If !PlayerRef.HasPerk(RDF_ReanimateFixPerk)
     PlayerRef.AddPerk(RDF_ReanimateFixPerk)
-    Debug.Notification("Added Reanimate Disintegration Fix Perk")
+    Debug.TraceAndBox("Added Reanimate Disintegration Fix Perk.")
   EndIf
 
 EndFunction
