@@ -23,6 +23,24 @@ Actor Zombie
 
 ;-------------------------------------------------------------------------------
 ;
+; FUNCTIONS
+;
+;-------------------------------------------------------------------------------
+
+Function TrackZombie()
+
+  Bool Done = Controller.TrackZombie(Zombie)
+
+  If !Done
+    RegisterForModEvent("RDF_AliasControllerReady", "AliasControllerReady")
+  Else
+    Self.Dispel()
+  EndIf
+
+EndFunction
+
+;-------------------------------------------------------------------------------
+;
 ; EVENTS
 ;
 ;-------------------------------------------------------------------------------
@@ -40,13 +58,7 @@ Event OnEffectStart(Actor Target, Actor Caster)
     Zombie.AddToFaction(ZombieFactions[i])
   EndWhile
 
-  Bool Done = Controller.TrackZombie(Zombie)
-
-  If !Done
-    RegisterForModEvent("RDF_AliasControllerReady", "AliasControllerReady")
-  Else
-    Self.Dispel()
-  EndIf
+  TrackZombie()
 
 EndEvent
 
@@ -59,13 +71,6 @@ EndEvent
 Event AliasControllerReady(String EventName, String CallbackName)
 
   UnregisterForModEvent("RDF_AliasControllerReady")
-
-  Bool Done = Controller.TrackZombie(Zombie)
-
-  If !Done
-    RegisterForModEvent("RDF_AliasControllerReady", "AliasControllerReady")
-  Else
-    Self.Dispel()
-  EndIf
+  TrackZombie()
 
 EndEvent

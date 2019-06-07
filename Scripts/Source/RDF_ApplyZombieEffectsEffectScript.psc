@@ -4,7 +4,7 @@ Scriptname RDF_ApplyZombieEffectsEffectScript extends ActiveMagicEffect
 FormList Property RDF_ZombieEffectsList Auto
 {Form list of effects to apply.}
 
-Event OnEffectStart(Actor Caster, Actor Target)
+Event OnEffectStart(Actor Target, Actor Caster)
 
   Debug.TraceAndBox("Applying Zombie Effects to " + Target)
 
@@ -14,14 +14,14 @@ Event OnEffectStart(Actor Caster, Actor Target)
     i -= 1
     Spell ZombieEffect = RDF_ZombieEffectsList.GetAt(i) as Spell
 
-    Target.AddSpell(ZombieEffect)
-
-    Debug.TraceAndBox("Applied Zombie Effect " + ZombieEffect)
+    If Target.AddSpell(ZombieEffect)
+      Debug.TraceAndBox("Applied Zombie Effect " + ZombieEffect.GetName())
+    EndIf
   EndWhile
 
 EndEvent
 
-Event OnEffectFinish(Actor Caster, Actor Target)
+Event OnEffectFinish(Actor Target, Actor Caster)
 
   Debug.TraceAndBox("Removing Zombie Effects from " + Target)
 
@@ -31,9 +31,9 @@ Event OnEffectFinish(Actor Caster, Actor Target)
     i -= 1
     Spell ZombieEffect = RDF_ZombieEffectsList.GetAt(i) as Spell
 
-    Target.AddSpell(ZombieEffect)
-
-    Debug.TraceAndBox("Removed Zombie Effect " + ZombieEffect)
+    If Target.DispelSpell(ZombieEffect)
+      Debug.TraceAndBox("Removed Zombie Effect " + ZombieEffect.GetName())
+    EndIf
   EndWhile
 
 EndEvent

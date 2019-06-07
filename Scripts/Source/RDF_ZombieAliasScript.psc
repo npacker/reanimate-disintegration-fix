@@ -41,8 +41,6 @@ Float fWait = 0.01
 
 Function UntrackZombie(Actor Zombie)
 
-  GoToState("Dying")
-
   Bool Done = Controller.UntrackZombie(Self, Zombie)
 
   If !Done
@@ -60,9 +58,6 @@ EndFunction
 ;-------------------------------------------------------------------------------
 
 State Dying
-
-  Function UntrackZombie(Actor Zombie)
-  EndFunction
 
   Event OnUnload()
   EndEvent
@@ -86,13 +81,7 @@ State Dying
     Actor Zombie = Self.GetReference() as Actor
 
     If Zombie
-      Bool Done = Controller.UntrackZombie(Self, Zombie)
-
-      If !Done
-        RegisterForModEvent("RDF_AliasControllerReady", "AliasControllerReady")
-      Else
-        GoToState("")
-      EndIf
+      UntrackZombie(Zombie)
     EndIf
 
   EndEvent
@@ -117,6 +106,7 @@ Event OnUpdate()
 
   If Zombie
     If ZombieHasExpired(Zombie)
+      GoToState("Dying")
       UntrackZombie(Zombie)
     Else
       MoveZombieToPlayer(Zombie, PlayerRef)

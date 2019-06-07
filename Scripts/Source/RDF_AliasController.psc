@@ -84,6 +84,7 @@ Bool Function UntrackZombie(ReferenceAlias ZombieAlias, Actor Zombie)
 
   GoToState("Busy")
   CleanUpZombie(ZombieAlias, Zombie, RDF_ZombieFactionsList)
+  Debug.TraceAndBox("Zombie Untracked: " + Zombie + ", " + ZombieAlias)
   GoToState("")
   SendModEvent("AliasControllerReady")
 

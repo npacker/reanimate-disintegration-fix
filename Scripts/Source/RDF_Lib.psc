@@ -4,7 +4,6 @@ Function CleanUpZombie(ReferenceAlias ZombieAlias, Actor Zombie, FormList Factio
 
   Zombie.Kill()
   ZombieAlias.Clear()
-  Zombie.DispelAllSpells()
 
   Int Index = Factions.GetSize()
 
